@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
+const moviesApi = new MoviesAPI();
 
 const Reviews = () => {
   const [reviews, setReviews] = useState(null);
   const { movieId } = useParams();
 
   useEffect(() => {
-    MoviesAPI.getMovieReviews(movieId).then(setReviews);
+    moviesApi.getMovie('reviews', movieId).then(setReviews);
   }, [movieId]);
 
   if (reviews) {

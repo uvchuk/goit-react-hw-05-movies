@@ -1,19 +1,19 @@
+import { useUser } from 'components/Context/Context';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
+const moviesApi = new MoviesAPI();
 
 const Credits = () => {
-  const [config, setConfig] = useState(null);
+  const { base_url, poster_sizes } = useUser();
   const [credits, setCredits] = useState(null);
   const { movieId } = useParams();
 
   useEffect(() => {
-    MoviesAPI.getConfig().then(({ images }) => setConfig(images));
-    MoviesAPI.getMovieCredits(movieId).then(({ cast }) => setCredits(cast));
+    moviesApi.getMovie('credits', movieId).then(({ cast }) => setCredits(cast));
   }, [movieId]);
 
-  if (config && credits) {
-    const { base_url, poster_sizes } = config;
+  if (credits) {
     return (
       <div>
         {credits.map(({ id, character, name, profile_path }) => (

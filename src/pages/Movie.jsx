@@ -1,20 +1,20 @@
 import { Card } from 'components/Details/Details.styled';
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useParams } from 'react-router-dom';
+import { useUser } from 'components/Context/Context';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
+const moviesApi = new MoviesAPI();
 
-const MovieDetails = () => {
-  const [config, setConfig] = useState(null);
+const Movie = () => {
+  const { base_url, poster_sizes } = useUser();
   const [details, setDetails] = useState(null);
   const { movieId } = useParams();
 
   useEffect(() => {
-    MoviesAPI.getConfig().then(({ images }) => setConfig(images));
-    MoviesAPI.getMovieDetails(movieId).then(setDetails);
+    moviesApi.getMovie('details', movieId).then(setDetails);
   }, [movieId]);
 
-  if (config && details) {
-    const { base_url, poster_sizes } = config;
+  if (details) {
     const {
       original_title,
       title,
@@ -78,4 +78,4 @@ const MovieDetails = () => {
   }
 };
 
-export default MovieDetails;
+export default Movie;
