@@ -1,8 +1,8 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
 const moviesApi = new MoviesAPI();
-const UserContext = createContext();
-export const useUser = () => useContext(UserContext);
+const ConfigContext = createContext();
+export const useConfig = () => useContext(ConfigContext);
 
 export const Context = ({ children }) => {
   const [config, setConfig] = useState(null);
@@ -12,8 +12,8 @@ export const Context = ({ children }) => {
   if (!config) return;
   const { base_url, poster_sizes } = config;
   return (
-    <UserContext.Provider value={{ base_url, poster_sizes }}>
+    <ConfigContext.Provider value={{ base_url, poster_sizes }}>
       {children}
-    </UserContext.Provider>
+    </ConfigContext.Provider>
   );
 };

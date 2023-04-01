@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useUser } from 'components/Context/Context';
+import { Link, useLocation } from 'react-router-dom';
+import { useConfig } from 'components/Context/Context';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
 const moviesApi = new MoviesAPI();
 
 const Home = () => {
-  const { base_url, poster_sizes } = useUser();
+  document.title = 'Trending';
+  const { base_url, poster_sizes } = useConfig();
   const [trending, setTrending] = useState(null);
+  const location = useLocation();
+
   useEffect(() => {
     moviesApi.getMovie('trending').then(({ results }) => setTrending(results));
   }, []);
@@ -16,7 +19,7 @@ const Home = () => {
       <ul>
         {trending.map(({ id, poster_path, title }) => (
           <li key={id}>
-            <Link to={`movies/${id}`}>
+            <Link to={`movies/${id}`} state={{ from: location }}>
               <img
                 src={base_url + poster_sizes[3] + poster_path}
                 alt={title}

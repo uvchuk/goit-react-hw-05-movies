@@ -1,49 +1,49 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useUser } from 'components/Context/Context';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useConfig } from 'components/Context/Context';
+import { MoviesList } from 'components/MoviesList/MoviesList.styled';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
 const moviesApi = new MoviesAPI();
 
 const Movies = () => {
-  const { base_url, poster_sizes } = useUser();
-  const [query, setQuery] = useState(null);
-  const [page, setPage] = useState(1);
-  const [matches, setMatches] = useState(null);
+  const { base_url, poster_sizes } = useConfig();
+  const [searchParams, setSearchParams] = useSearchParams('');
+  const [movies, setMovies] = useState(null);
+  const location = useLocation();
+  const filter = searchParams.get('filter') ?? '';
+  const page = searchParams.get('page') ?? 1;
+  const searchConfig = Object.fromEntries([...searchParams]);
+  const backLink = useRef(location.state?.from ?? '/');
 
   useEffect(() => {
-    if (!query) return;
-    setPage(1);
+    document.title = 'Movies';
+    if (!searchParams) return;
     moviesApi
-      .searchMovies(query, page)
-      .then(({ results }) => setMatches(results))
-      .finally(setPage(prevPage => prevPage + 1));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+      .searchMovies(filter, page)
+      .then(({ results }) => setMovies(results));
+  }, [filter, page, searchParams]);
 
   const handleGetQuery = evt => {
-    evt.preventDefault();
-    setQuery(evt.target[0].value);
+    const searchInput = evt.target.value;
+    if (searchInput === '') {
+      // delete searchConfig.filter;
+      return setSearchParams({});
+    }
+    setSearchParams({ filter: searchInput, page: 1 });
   };
 
-  const onLoadMore = () => {
-    moviesApi
-      .searchMovies(query, page)
-      .then(({ results }) => setMatches([...matches, ...results]))
-      .finally(setPage(prevPage => prevPage + 1));
-  };
-
-  if (matches) {
+  if (movies) {
     return (
       <>
-        <form onSubmit={handleGetQuery}>
-          <input></input>
-          <button type="submit">Пошук</button>
+        <Link to={backLink.current}>Назад</Link>
+        <form onSubmit={evt => evt.preventDefault()}>
+          <input value={filter} onChange={handleGetQuery}></input>
         </form>
-        {matches.length > 0 && (
-          <ul>
-            {matches.map(({ id, poster_path, title }) => (
+        {movies.length > 0 && (
+          <MoviesList>
+            {movies.map(({ id, poster_path, title }) => (
               <li key={id}>
-                <Link to={`${id}`}>
+                <Link to={`${id}`} state={{ from: location }}>
                   <img
                     src={base_url + poster_sizes[2] + poster_path}
                     alt={title}
@@ -52,17 +52,15 @@ const Movies = () => {
                 </Link>
               </li>
             ))}
-            <button onClick={onLoadMore}>Наступні</button>
-          </ul>
+          </MoviesList>
         )}
+        <button
+          onClick={() => setSearchParams({ ...searchConfig, page: +page + 1 })}
+          type="button"
+        >
+          Наступні
+        </button>
       </>
-    );
-  } else {
-    return (
-      <form onSubmit={handleGetQuery}>
-        <input></input>
-        <button type="submit">Пошук</button>
-      </form>
     );
   }
 };

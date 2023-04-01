@@ -1,11 +1,11 @@
-import { useUser } from 'components/Context/Context';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useConfig } from 'components/Context/Context';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
 const moviesApi = new MoviesAPI();
 
 const Credits = () => {
-  const { base_url, poster_sizes } = useUser();
+  const { base_url, poster_sizes } = useConfig();
   const [credits, setCredits] = useState(null);
   const { movieId } = useParams();
 
