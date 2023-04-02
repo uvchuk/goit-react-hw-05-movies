@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Container, Header } from './Layout.styled';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Container, Header, StyledLink } from './Layout.styled';
 
 export const Layout = () => {
   const location = useLocation();
@@ -8,10 +8,10 @@ export const Layout = () => {
     <Container>
       <Header>
         <nav>
-          <Link to="/">Home</Link>
-          <Link to="/movies" state={{ from: location }}>
+          <StyledLink to="/">Home</StyledLink>
+          <StyledLink to="/movies" state={{ from: location }}>
             Movies
-          </Link>
+          </StyledLink>
         </nav>
       </Header>
       <main>

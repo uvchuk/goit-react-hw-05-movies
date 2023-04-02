@@ -5,5 +5,4 @@ export const List = styled.ul`
   flex-wrap: wrap;
   justify-content: space-between;
   list-style: none;
-  padding-left: 0;
 `;

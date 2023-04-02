@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
+import { List } from './Reviews.styled';
 const moviesApi = new MoviesAPI();
 
 const Reviews = () => {
@@ -17,17 +18,21 @@ const Reviews = () => {
       return <p>Ще немає відгуків до поточного фільму</p>;
     else
       return (
-        <ul>
+        <List>
           {results.map(({ author, content, id, url, updated_at }) => (
             <li key={id}>
+              <p>Автор: {author}</p>
+              <p>створений:{updated_at}</p>
               <p>
-                Автор: {author}, створений:{updated_at} , посилання на огляд:
-                {url}
+                посилання на огляд:{' '}
+                <a href={url} target="_blank" rel="noreferrer">
+                  Link
+                </a>
               </p>
               <p>{content}</p>
             </li>
           ))}
-        </ul>
+        </List>
       );
   }
 };

@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -8,5 +9,16 @@ export const Container = styled.div`
 `;
 
 export const Header = styled.header`
-  background-color: yellow;
+  border-bottom: 1px solid grey;
+`;
+
+export const StyledLink = styled(NavLink)`
+  display: inline-block;
+  padding: 15px;
+  color: black;
+  text-decoration: none;
+
+  &.active {
+    color: orange;
+  }
 `;

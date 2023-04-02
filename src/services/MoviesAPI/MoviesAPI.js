@@ -36,7 +36,7 @@ export default class MoviesAPI {
 
   async searchMovies(query, page) {
     const response = await axios.get(
-      `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}&page=${page}&include_adult=true`
+      `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}&page=${page}&include_adult=false`
     );
     return response.data;
   }

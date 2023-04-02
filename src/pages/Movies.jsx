@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { useConfig } from 'components/Context/Context';
-import { MoviesList } from 'components/MoviesList/MoviesList.styled';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import MoviesAPI from 'services/MoviesAPI/MoviesAPI';
+import MoviesList from 'components/MoviesList/MoviesList';
+import SearchForm from 'components/SearchForm/SearchForm';
+import BtnLoadMore from 'components/BtnLoadMore/BtnLoadMore';
+import { StyledLink } from 'components/Details/Details.styled';
 const moviesApi = new MoviesAPI();
 
 const Movies = () => {
-  const { base_url, poster_sizes } = useConfig();
   const [searchParams, setSearchParams] = useSearchParams('');
   const [movies, setMovies] = useState(null);
   const location = useLocation();
@@ -16,7 +17,6 @@ const Movies = () => {
   const backLink = useRef(location.state?.from ?? '/');
 
   useEffect(() => {
-    document.title = 'Movies';
     if (!searchParams) return;
     moviesApi
       .searchMovies(filter, page)
@@ -32,34 +32,22 @@ const Movies = () => {
     setSearchParams({ filter: searchInput, page: 1 });
   };
 
+  const onLoadMore = () => {
+    setSearchParams({ ...searchConfig, page: +page + 1 });
+  };
+
   if (movies) {
+    document.title = 'Movies';
     return (
       <>
-        <Link to={backLink.current}>Назад</Link>
-        <form onSubmit={evt => evt.preventDefault()}>
-          <input value={filter} onChange={handleGetQuery}></input>
-        </form>
+        <StyledLink to={backLink.current}>Back</StyledLink>
+        <SearchForm filter={filter} handleGetQuery={handleGetQuery} />
         {movies.length > 0 && (
-          <MoviesList>
-            {movies.map(({ id, poster_path, title }) => (
-              <li key={id}>
-                <Link to={`${id}`} state={{ from: location }}>
-                  <img
-                    src={base_url + poster_sizes[2] + poster_path}
-                    alt={title}
-                  ></img>
-                  <p> {title}</p>
-                </Link>
-              </li>
-            ))}
-          </MoviesList>
+          <>
+            <MoviesList movies={movies} />{' '}
+            <BtnLoadMore onLoadMore={onLoadMore} />
+          </>
         )}
-        <button
-          onClick={() => setSearchParams({ ...searchConfig, page: +page + 1 })}
-          type="button"
-        >
-          Наступні
-        </button>
       </>
     );
   }
